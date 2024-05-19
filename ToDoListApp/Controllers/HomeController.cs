@@ -56,8 +56,68 @@ namespace ToDoListApp.Controllers
                     toDoListQuery = toDoListQuery.Where(e => e.ListEndDate == today);
                 }
             }
+            var tasks = toDoListQuery.OrderBy(e => e.ListEndDate).ToList();
 
-            return View();
+            return View(tasks);
+        }
+        [HttpGet]
+        public IActionResult Add()
+        {
+            ViewBag.Categories = toDoListContext.ToDoListCategories.ToList();
+            ViewBag.Statuses = toDoListContext.ToDoListStatuses.ToList();
+            var task = new ToDoList { StatusId = "open" };
+            return View(task);
+        }
+
+        [HttpPost]
+        public IActionResult Add(ToDoList task)
+        {
+            if (ModelState.IsValid)
+            {
+                toDoListContext.ToDoLists.Add(task);
+                toDoListContext.SaveChanges();
+                return RedirectToAction("Index");
+            }
+            else
+            {
+                ViewBag.Categories = toDoListContext.ToDoListCategories.ToList();
+                ViewBag.Statuses = toDoListContext.ToDoListStatuses.ToList();
+                return View(task);
+            }
+        }
+
+        [HttpPost]
+        public IActionResult Filter(string[] filter)
+        {
+            string id = string.Join('-', filter);
+            return RedirectToAction("Index", new { ID = id });
+        }
+
+        [HttpPost]
+        public IActionResult MarkDone([FromRoute] string id, ToDoList selectedList)
+        {
+            selectedList = toDoListContext.ToDoLists.Find(selectedList.ListId)!;
+
+            if (selectedList != null)
+            {
+                selectedList.StatusId = "closed";
+                toDoListContext.SaveChanges();
+            }
+            return RedirectToAction("Index", new { ID = id });
+        }
+        [HttpPost]
+        public IActionResult DeleteDone(string id)
+        {
+            var listsToDelete = toDoListContext.ToDoLists.Where(e => e.StatusId == "closed").ToList();
+
+            foreach (var task in listsToDelete)
+            {
+                toDoListContext.ToDoLists.Remove(task);
+            }
+
+            toDoListContext.SaveChanges();
+
+            return RedirectToAction("Index", new { ID = id });
         }
     }
 }

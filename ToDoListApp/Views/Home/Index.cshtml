@@ -1,8 +1,69 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
-}
+﻿@model IEnumerable<ToDoList>
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+    <div class="row">
+        <div class="col-md-2">
+            <form asp-action="Filters" method="post">
+                <div class="mb-3">
+                    <label class="col-form-label">Category</label>
+                    <select name="filter" class="form-select"
+                            asp-items="@(new SelectList(ViewBag.Categories, "CategoryId", "CategoryName", ViewBag.Filters.CategoryId))">
+                        <option value="all">All</option>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label class="col-form-label">End Date:</label>
+                    <select name="filter" class="form-select"
+                            asp-items="@(new SelectList(ViewBag.EndDateFilters, "Key", "Value", ViewBag.Filters.EndDate))">
+                        <option value="all">All</option>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label class="col-form-label">Status:</label>
+                    <select name="filter" class="form-select"
+                            asp-items="@(new SelectList(ViewBag.Statuses, "StatusId", "StatusName", ViewBag.Filters.StatusId))">
+                        <option value="all">All</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-primary">Filter</button>
+                <a asp-action="Index" asp-route-id="" class="btn btn-primary">Clear</a>
+            </form>
+        </div>
+        <div class="col-md-10">
+            <form asp-action="MarkDone" method="post" asp-route-id="@ViewBag.Filters.FilterStr">
+                <table class="table table-bordered table-striped" mt-2>
+                    <thead>
+                        <tr>
+                            <th>Description</th>
+                            <th>Category</th>
+                            <th>End Date</th>
+                            <th>Status</th>
+                            <th class="w-25"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (ToDoList item in Model)
+                        {
+                            string pending = item.IsPending ? "bg-warning" : "";
+                        <tr>
+                            <td>@item.ListDescription</td>
+                            <td>@item.Category.CategoryName</td>
+                            <td class="@pending">@item.ListEndDate.ToShortDateString()</td>
+                            <td>
+                                @if (item.StatusId == "open")
+                                {
+                                    <button type="submit" class="btn btn-primary btn-sm" 
+                                            name="@nameof(ToDoList.ListId)"
+                                            value="@item.ListId">Mark as Done</button>
+                                }
+                            </td>
+                        </tr>
+                        }
+                    </tbody>
+                </table>
+            </form>
+            <form asp-action="DeleteDone" method="post" asp-route-id="@ViewBag.Filters.FilterStr">
+                <a asp-action="Add" class="btn btn-primary">Add a new task</a>
+                <button type="submit" class="btn btn-primary">Delete Done tasks</button>
+            </form>
+        </div>
+    </div>
