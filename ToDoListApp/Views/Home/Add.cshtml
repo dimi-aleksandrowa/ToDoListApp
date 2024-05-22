@@ -1,0 +1,34 @@
+﻿@model ToDoList
+
+<h2>Add New Task</h2>
+
+<div asp-validation-summary="All" class="text-danger"></div>
+
+<form asp-action="Add" method="post">
+    <div class="mb-3">
+        <label asp-for="ListDescription" class="col-form-label">List Description</label>
+        <input asp-for="ListDescription" />
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="CategoryId" class="col-form-label">Category</label>
+        <select asp-for="CategoryId" class="form-select" asp-items="@(new SelectList(ViewBag.Categories, "CategoryId", "CategoryName"))">
+            <option value=""></option>
+        </select>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="ListEndDate" class="col-form-label">End Date</label>
+        <input asp-for="ListEndDate" class="form-control" type="text" />
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="StatusId" class="col-form-label">Status</label>
+        <select asp-for="StatusId" class="form-select" asp-items="@(new SelectList(ViewBag.Statuses, "StatusId", "StatusName"))">
+            <option value=""></option>
+        </select>
+    </div>
+
+    <button type="submit" class="btn btn-dark">Add</button>
+    <a asp-action="Index" class="btn btn-outline-dark">Cancel</a> 
+</form>

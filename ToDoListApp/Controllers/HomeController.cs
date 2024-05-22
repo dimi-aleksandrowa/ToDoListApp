@@ -100,7 +100,7 @@ namespace ToDoListApp.Controllers
 
             if (selectedList != null)
             {
-                selectedList.StatusId = "closed";
+                selectedList.StatusId = "done";
                 toDoListContext.SaveChanges();
             }
             return RedirectToAction("Index", new { ID = id });
@@ -108,7 +108,7 @@ namespace ToDoListApp.Controllers
         [HttpPost]
         public IActionResult DeleteDone(string id)
         {
-            var listsToDelete = toDoListContext.ToDoLists.Where(e => e.StatusId == "closed").ToList();
+            var listsToDelete = toDoListContext.ToDoLists.Where(e => e.StatusId == "done").ToList();
 
             foreach (var task in listsToDelete)
             {

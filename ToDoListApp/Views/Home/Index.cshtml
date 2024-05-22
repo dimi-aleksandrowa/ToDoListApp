@@ -48,6 +48,7 @@
                             <td>@item.ListDescription</td>
                             <td>@item.Category.CategoryName</td>
                             <td class="@pending">@item.ListEndDate.ToShortDateString()</td>
+                            <td class="@pending">@item.Status.StatusName</td>
                             <td>
                                 @if (item.StatusId == "open")
                                 {
